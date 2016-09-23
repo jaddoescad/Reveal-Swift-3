@@ -687,7 +687,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 346A2CAECBDC722E25DDE0D6 /* Pods-Reveal Swift 3Tests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 4K4WF2L5K6;
 				INFOPLIST_FILE = "Reveal Swift 3Tests/Info.plist";
@@ -703,7 +703,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E643E5BD4F058EBE6681EC3B /* Pods-Reveal Swift 3Tests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 4K4WF2L5K6;
 				INFOPLIST_FILE = "Reveal Swift 3Tests/Info.plist";
@@ -719,7 +719,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3F3CB93EF5E327E0A9E15810 /* Pods-Reveal Swift 3UITests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 4K4WF2L5K6;
 				INFOPLIST_FILE = "Reveal Swift 3UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -734,7 +734,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 32032611F0F7A7BE07B6F188 /* Pods-Reveal Swift 3UITests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 4K4WF2L5K6;
 				INFOPLIST_FILE = "Reveal Swift 3UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

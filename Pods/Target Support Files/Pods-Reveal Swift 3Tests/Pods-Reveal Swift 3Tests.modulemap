@@ -1,0 +1,6 @@
+framework module Pods_Reveal_Swift_3Tests {
+  umbrella header "Pods-Reveal Swift 3Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

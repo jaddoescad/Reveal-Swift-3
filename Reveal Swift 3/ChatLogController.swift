@@ -50,7 +50,6 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     
     var blockOperations = [BlockOperation]()
     private func controller(controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeObject anObject: AnyObject, atIndexPath indexPath: IndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        
         if type == .insert {
 
             blockOperations.append(BlockOperation(block: { [weak self] in 
@@ -89,10 +88,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
             }
             
             }, completion: { (finished) -> Void in
-                CATransaction.begin()
-                CATransaction.setDisableActions(true)
-                self.scrollToBottom(animated: true)
-                CATransaction.commit()
+
                 self.blockOperations.removeAll(keepingCapacity: false)
 
 
@@ -121,7 +117,6 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         getMessagesCount()
-        print(fetchedResultsControler.fetchedObjects?.count)
 
         self.senderId = "group"
         self.senderDisplayName = "name"
@@ -155,7 +150,6 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     
     private func createMessageWithText(text: String, context: NSManagedObjectContext, date: NSDate){
         let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
-        
         message.text = text
         message.timestamp = date
     }

@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         FIRApp.configure()
 
-        
+        print(applicationDirectoryPath(), "hekk")
         return true
     }
 
@@ -92,6 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
+    func applicationDirectoryPath() -> String {
+        return NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String
+    }
 }
 

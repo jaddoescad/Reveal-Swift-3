@@ -18,7 +18,6 @@ class LoginController: UIViewController  {
     let dispatch_group = DispatchGroup()
     
     @IBOutlet var signinbutton: UIButton!
-    @IBOutlet weak var activityindic: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +43,6 @@ class LoginController: UIViewController  {
     }
     func AuthandGotoHome() {
         dispatch_group.notify(queue: DispatchQueue.main, execute: {
-            self.activityindic.stopAnimating()
             self.finishedlogin.text = "finished"
             //let controller = ChatLogController()
               self.observeRealTimeMessages()
@@ -52,7 +50,11 @@ class LoginController: UIViewController  {
             //self.showViewController(controller, sender: nil)
         })
         
-        
+    }
+    
+    
+    
+    
         func observeMessages() {
             dispatch_group.enter()
             
@@ -92,7 +94,7 @@ class LoginController: UIViewController  {
             
             
         }
-    }
+    
     
     func observeRealTimeMessages() {
         
@@ -123,6 +125,10 @@ class LoginController: UIViewController  {
         
         
     }
+
+
+
+
     func createMessageWithText(text: String, context: NSManagedObjectContext, date: NSDate) {
         
         let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages

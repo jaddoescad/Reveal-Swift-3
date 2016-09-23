@@ -7,19 +7,40 @@
 //
 
 import UIKit
+import Firebase
+import CoreData
 
-class ViewController: UIViewController {
-
+class LoginController: UIViewController  {
+    
+    @IBOutlet weak var finishedlogin: UILabel!
+    
+    // var messagesController: MessagesController?
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let dispatch_group = DispatchGroup()
+    
+    @IBOutlet var signinbutton: UIButton!
+    @IBOutlet weak var activityindic: UIActivityIndicatorView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Mesages")
+        do {
+            if let messages = try context.fetch(fetchRequest) as? [Mesages] {
+                for message in messages {
+                    
+                    context.delete(message)
+                    
+                }
+                
+            }
+        } catch { }
+        view.backgroundColor = UIColor.white
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    
+    @IBAction func loginButton(sender: AnyObject) {
+        
+      //  AuthandGotoHome()
+        
     }
-
-
 }
-

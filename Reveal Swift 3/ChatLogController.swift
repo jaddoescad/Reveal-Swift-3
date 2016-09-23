@@ -52,18 +52,20 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         if fetchedResultsControler.fetchedObjects?.count != 0 {
+
             collectionView?.performBatchUpdates({() -> Void in
-                
                 
                 for operation in self.blockOperations {
                     operation.start()
+
                     
                 }
                 
+             
                 }, completion: { (finished) -> Void in
-                    
+           
                     self.blockOperations.removeAll(keepingCapacity: false)
-                    
+
                     
             })
         }
@@ -80,7 +82,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
                     this.collectionView.collectionViewLayout.invalidateLayout()
                     this.collectionView?.insertItems(at: [newIndexPath!])
                     this.inputToolbar.contentView.textView.text = nil
-                    
+
                 }
                 
                 
@@ -121,6 +123,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         getMessagesCount()
+        self.observeRealTimeMessages()
         self.senderId = "group"
         self.senderDisplayName = "name"
         self.collectionView.collectionViewLayout.incomingAvatarViewSize = CGSize(width: 0.1, height: 0.1)
@@ -199,13 +202,13 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
 
         messagesNode.child(messageName.key).updateChildValues(values)
         
-        
-        
-        
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         self.scrollToBottom(animated: true)
         CATransaction.commit()
+        
+        
+      
     }
     
     
@@ -260,5 +263,47 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
         let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
         message.text = text
         message.timestamp = date
+    }
+    func observeRealTimeMessages() {
+        
+        FIRDatabase.database().reference().child("messages").queryLimited(toLast: 10).observe(.childAdded, with: {(snapshot) in
+            guard let messageInfo = snapshot.value as? [String: AnyObject] else {return}
+            let message = MessageModel(dictionary: messageInfo)
+            
+            guard let timestamp = message.timestamp else {return}
+            guard let text = message.text else {return}
+            
+            let date = NSDate(timeIntervalSinceReferenceDate: (Double(timestamp)))
+            
+            let countRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Mesages")
+            countRequest.predicate = NSPredicate(format: "timestamp = %@", date)
+            
+            do
+            {
+                
+                let count = try self.context.count(for: countRequest)
+                if count == NSNotFound {}
+                if  count == 0 {
+                    self.createMessageWithText(text: text, context: self.context, date: date)
+                    try self.context.save()
+                    CATransaction.begin()
+                    CATransaction.setDisableActions(true)
+                    self.scrollToBottom(animated: true)
+                    CATransaction.commit()
+
+                }
+            
+                
+            } catch {}
+            
+        })
+        
+        
+    }
+    func createMessageRealTime(text: String, context: NSManagedObjectContext, date: NSDate) {
+        let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
+        message.text = text
+        message.timestamp = date
+        
     }
 }

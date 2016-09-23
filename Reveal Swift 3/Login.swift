@@ -47,7 +47,6 @@ class LoginController: UIViewController  {
         dispatch_group.notify(queue: DispatchQueue.main, execute: {
             self.finishedlogin.text = "finished"
             let controller = ChatLogController()
-              self.observeRealTimeMessages()
             self.show(controller, sender: nil)
         })
     }
@@ -94,35 +93,7 @@ class LoginController: UIViewController  {
         }
     
     
-    func observeRealTimeMessages() {
-        
-        FIRDatabase.database().reference().child("messages").queryLimited(toLast: 10).observe(.childAdded, with: {(snapshot) in
-            guard let messageInfo = snapshot.value as? [String: AnyObject] else {return}
-            let message = MessageModel(dictionary: messageInfo)
-            
-            guard let timestamp = message.timestamp else {return}
-            guard let text = message.text else {return}
-            
-            let date = NSDate(timeIntervalSinceReferenceDate: (Double(timestamp)))
-            
-            let countRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Mesages")
-            countRequest.predicate = NSPredicate(format: "timestamp = %@", date)
-            
-            do
-            {
-                
-                let count = try self.context.count(for: countRequest)
-                if count == NSNotFound {}
-                if  count == 0 {
-                    self.createMessageWithText(text: text, context: self.context, date: date)
-                }
-                try self.context.save()
-            } catch {}
-            
-        })
-        
-        
-    }
+
 
 
 
@@ -132,10 +103,5 @@ class LoginController: UIViewController  {
         message.text = text
         message.timestamp = date
     }
-    func createMessageRealTime(text: String, context: NSManagedObjectContext, date: NSDate) {
-        let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
-        message.text = text
-        message.timestamp = date
-        
-    }
+
 }

@@ -35,10 +35,10 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     }
     
     
-    let delegate = UIApplication.shared.delegate as! AppDelegate
     
     lazy var fetchedResultsControler: NSFetchedResultsController<NSFetchRequestResult> = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Mesages")
+        fetchRequest.predicate = NSPredicate(format: "timestamp != nil")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: true)]
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.context, sectionNameKeyPath: nil, cacheName: nil)
         frc.delegate = self
@@ -49,52 +49,56 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     
     
     var blockOperations = [BlockOperation]()
-    private func controller(controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeObject anObject: AnyObject, atIndexPath indexPath: IndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        if type == .insert {
 
-            blockOperations.append(BlockOperation(block: { [weak self] in 
-               
-                if let this = self {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        if fetchedResultsControler.fetchedObjects?.count != 0 {
+            collectionView?.performBatchUpdates({() -> Void in
                 
-                this.collectionView.collectionViewLayout.invalidateLayout()
-                this.collectionView?.insertItems(at: [newIndexPath!])
-                this.inputToolbar.contentView.textView.text = nil
+                
+                for operation in self.blockOperations {
+                    operation.start()
                     
                 }
-
                 
-            }))
+                }, completion: { (finished) -> Void in
+                    
+                    self.blockOperations.removeAll(keepingCapacity: false)
+                    
+                    
+            })
+        }
+
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        if type == .insert {
+            
+            blockOperations.append(BlockOperation(block: { [weak self] in
+                
+                if let this = self {
+                    
+                    this.collectionView.collectionViewLayout.invalidateLayout()
+                    this.collectionView?.insertItems(at: [newIndexPath!])
+                    this.inputToolbar.contentView.textView.text = nil
+                    
+                }
+                
+                
+                }))
         }
         if type == .update {
             blockOperations.append(BlockOperation(block: { [weak self] in
                 if let this = self {
-
-            this.collectionView.collectionViewLayout.invalidateLayout()
-            this.collectionView.reloadItems(at: [indexPath!])
+                    
+                    this.collectionView.collectionViewLayout.invalidateLayout()
+                    this.collectionView.reloadItems(at: [indexPath!])
                 }
-            }))
+                }))
             
         }
+
     }
-        private func controllerDidChangeContent(controller: NSFetchedResultsController<NSFetchRequestResult>) {
-            
-            if fetchedResultsControler.fetchedObjects?.count != 0 {
-        collectionView?.performBatchUpdates({() -> Void in
 
-            
-            for operation in self.blockOperations {
-                operation.start()
-
-            }
-            
-            }, completion: { (finished) -> Void in
-
-                self.blockOperations.removeAll(keepingCapacity: false)
-
-
-        })
-            }
-    }
     
 
     
@@ -117,7 +121,6 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         getMessagesCount()
-
         self.senderId = "group"
         self.senderDisplayName = "name"
         self.collectionView.collectionViewLayout.incomingAvatarViewSize = CGSize(width: 0.1, height: 0.1)
@@ -130,29 +133,6 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
 
     }
 
-
-   
-    func saveMessagetoCoreData(text: String, timestamp: NSNumber) {
-        
-        let doubletimestamp = Double(timestamp)
-        let date = NSDate(timeIntervalSinceReferenceDate: (doubletimestamp))
-        
-        createMessageWithText(text: text, context: context, date: date)
-        
-        
-        do {
-            try context.save()
-            self.inputToolbar.toggleSendButtonEnabled()   
-        } catch let err {
-            print(err)
-        }
-    }
-    
-    private func createMessageWithText(text: String, context: NSManagedObjectContext, date: NSDate){
-        let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
-        message.text = text
-        message.timestamp = date
-    }
     
     deinit {
         print("deinitialized chatLog")
@@ -211,15 +191,16 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func didPressSend(_ button: UIButton!, withMessageText text: String!, senderId: String! ,senderDisplayName: String!, date: Date){
         let timestamp: NSNumber = Double(Date().timeIntervalSinceReferenceDate) as NSNumber
         
-        
+        saveMessagetoCoreData(text: text, timestamp: timestamp)
+
         let messagesNode = FIRDatabase.database().reference().child("messages")
         let messageName = messagesNode.childByAutoId()
         let values = ["text": text, "timestamp": timestamp, "messageStatus": "Sent"] as [String : Any]
+
         messagesNode.child(messageName.key).updateChildValues(values)
         
         
         
-        saveMessagetoCoreData(text: text, timestamp: timestamp)
         
         CATransaction.begin()
         CATransaction.setDisableActions(true)
@@ -258,5 +239,26 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
         
         
     }
-
+    
+    func saveMessagetoCoreData(text: String, timestamp: NSNumber) {
+        
+        let doubletimestamp = Double(timestamp)
+        let date = NSDate(timeIntervalSinceReferenceDate: (doubletimestamp))
+        
+        createMessageWithText(text: text, context: context, date: date)
+        
+        
+        do {
+            try context.save()
+            self.inputToolbar.toggleSendButtonEnabled()
+        } catch let err {
+            print(err)
+        }
+    }
+    
+    private func createMessageWithText(text: String, context: NSManagedObjectContext, date: NSDate){
+        let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
+        message.text = text
+        message.timestamp = date
+    }
 }

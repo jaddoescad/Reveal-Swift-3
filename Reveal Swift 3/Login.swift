@@ -42,19 +42,17 @@ class LoginController: UIViewController  {
         
     }
     func AuthandGotoHome() {
+        self.observeMessages()
+
         dispatch_group.notify(queue: DispatchQueue.main, execute: {
             self.finishedlogin.text = "finished"
-            //let controller = ChatLogController()
+            let controller = ChatLogController()
               self.observeRealTimeMessages()
-             self.observeMessages()
-            //self.showViewController(controller, sender: nil)
+            self.show(controller, sender: nil)
         })
-        
     }
     
-    
-    
-    
+
         func observeMessages() {
             dispatch_group.enter()
             
@@ -130,20 +128,12 @@ class LoginController: UIViewController  {
 
 
     func createMessageWithText(text: String, context: NSManagedObjectContext, date: NSDate) {
-        
         let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
-        
-        
         message.text = text
         message.timestamp = date
-        
     }
-    
-    
-    
     func createMessageRealTime(text: String, context: NSManagedObjectContext, date: NSDate) {
         let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
-        
         message.text = text
         message.timestamp = date
         

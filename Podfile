@@ -7,7 +7,7 @@ target 'Reveal Swift 3' do
 	pod 'Firebase/Database'
 pod 'Firebase/Auth'
 pod 'Firebase/Core'
-
+pod 'JSQMessagesViewController'
 	
   # Pods for Reveal Swift 3
 

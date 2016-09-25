@@ -1,4 +1,4 @@
-
+//OS_ACTIVITY_MODE = disable
 import UIKit
 import Firebase
 import JSQMessagesViewController
@@ -118,7 +118,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         getMessagesCount()
-        self.observeRealTimeMessages()
+       // self.observeRealTimeMessages()
         //required inits by jsqmessagescontroller
         self.senderId = "group"
         self.senderDisplayName = "name"
@@ -129,6 +129,9 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        //removes observers when chat log disappears
+        let messagesref =  FIRDatabase.database().reference().child("messages")
+        messagesref.removeAllObservers()
 
     }
 
@@ -141,6 +144,9 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
             operation.cancel()
         }
         blockOperations.removeAll(keepingCapacity: false)
+        //removing observers
+   
+        print("deinit")
     
     }
     
@@ -301,4 +307,5 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
         message.timestamp = date
         
     }
+    
 }

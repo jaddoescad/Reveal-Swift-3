@@ -69,6 +69,7 @@
                     <navigationItem key="navigationItem" id="b6Y-4v-EQt"/>
                     <connections>
                         <outlet property="finishedlogin" destination="5FP-eG-Uzp" id="iQ4-iS-Xue"/>
+                        <outlet property="loginButton" destination="8ZI-g6-V94" id="pUy-MD-hKL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2MR-Mc-ahc" sceneMemberID="firstResponder"/>

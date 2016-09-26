@@ -18,6 +18,7 @@ class LoginController: UIViewController  {
     //Initializing dispatch group: this is to make sure that all functions complete before presenting the chat controller
     let dispatch_group = DispatchGroup()
     
+    @IBOutlet weak var loginButton: UIButton!
     
     
     override func viewDidLoad() {
@@ -43,6 +44,7 @@ class LoginController: UIViewController  {
     //login button action
     @IBAction func loginButton(sender: AnyObject) {
         // a function that contains a set of function that enables authentication
+        loginButton.isEnabled = false // this is done to solve the bug of creating multiple instances at the same time
         AuthandGotoHome()
         
     }
@@ -56,6 +58,7 @@ class LoginController: UIViewController  {
             let controller = ChatLogController()
             //shows chat controller
             self.show(controller, sender: nil)
+            self.loginButton.isEnabled = true
         })
     }
     

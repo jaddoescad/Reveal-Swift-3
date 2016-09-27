@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="zaL-8N-OW9">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="zaL-8N-OW9">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
@@ -37,7 +37,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8ZI-g6-V94">
                                 <state key="normal" image="FB login"/>
                                 <connections>
-                                    <action selector="loginButtonWithSender:" destination="UJl-F2-Gai" eventType="touchUpInside" id="ZhY-Uv-KgS"/>
+                                    <action selector="loginButton:" destination="UJl-F2-Gai" eventType="touchUpInside" id="f0W-7V-9yg"/>
                                 </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Reveal Logo" translatesAutoresizingMaskIntoConstraints="NO" id="mu6-ab-K4x"/>
@@ -69,7 +69,7 @@
                     <navigationItem key="navigationItem" id="b6Y-4v-EQt"/>
                     <connections>
                         <outlet property="finishedlogin" destination="5FP-eG-Uzp" id="iQ4-iS-Xue"/>
-                        <outlet property="loginButton" destination="8ZI-g6-V94" id="pUy-MD-hKL"/>
+                        <outlet property="loginButton" destination="8ZI-g6-V94" id="ovd-Cy-aBT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2MR-Mc-ahc" sceneMemberID="firstResponder"/>

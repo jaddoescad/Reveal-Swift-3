@@ -10,6 +10,6 @@ import Foundation
 import CoreData
 
 
-public class Mesages: NSManagedObject {
+open class Mesages: NSManagedObject {
 
 }

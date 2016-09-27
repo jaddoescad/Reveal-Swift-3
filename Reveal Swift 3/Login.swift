@@ -9,6 +9,10 @@
 import UIKit
 import Firebase
 import CoreData
+import FacebookCore
+import FacebookLogin
+import FacebookShare
+
 
 class LoginController: UIViewController  {
     //label to visually verify if authentication finished
@@ -19,8 +23,8 @@ class LoginController: UIViewController  {
     //let dispatch_group = DispatchGroup()
     //var loginbool = true
     
-    
     @IBOutlet weak var loginButton: UIButton!
+    
     
     
     override func viewDidLoad() {
@@ -42,13 +46,50 @@ class LoginController: UIViewController  {
         //change the login background color to white
         view.backgroundColor = UIColor.white
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        if let _ = AccessToken.current {
+            AuthandGotoHome()
+            print("hello")
+        }
+    }
     //login button action
-    @IBAction func loginButton(sender: AnyObject) {
-        self.loginButton.isEnabled = false
+    @IBAction func loginButton(_ sender: AnyObject) {
+
+        
+        let loginManager = LoginManager()
+//        loginManager.logIn([ .publicProfile, .email, .publicProfile ], viewController: self) { loginResult in
+//            self.AuthandGotoHome()
+//     
+//            
+//            }
+        loginManager.logIn([.publicProfile, .email, .publicProfile], viewController: self) { (LoginResult) in
+            print("hello")
+        }
+        
+        
+        
         // a function that contains a set of function that enables authentication
         //loginButton.isEnabled = false // this is done to solve the bug of creating multiple instances at the same time
-        AuthandGotoHome()
+        
+        
+        
+        //        fbLoginManager.logIn(["email"], viewController: self, completion: { (result, error) in
+//            
+//            
+//            
+//        })
+//            if (error != nil){
+//                print(error)
+//                let loginManager = FBSDKLoginManager()
+//                loginManager.logOut()
+//                NSLog("logout")
+//                var controller:LoginController
+//                controller = self.storyboard?.instantiateViewControllerWithIdentifier("LoginController") as! LoginController
+//                self.presentViewController(controller, animated: true, completion: nil)
+//            } else {
+//                
+//            }
+//        }
         
     }
     
@@ -87,7 +128,7 @@ class LoginController: UIViewController  {
                     //efficient count request to check if messages exist by count
                     do {
                             //create messages by assigning text and timestamp to the coredata objects
-                           self.createMessageWithText(text: message["text"] as! String, context: self.context, date: date)
+                           self.createMessageWithText(message["text"] as! String, context: self.context, date: date as Date)
                         
                         //saves messages
                         try self.context.save()
@@ -106,7 +147,6 @@ class LoginController: UIViewController  {
                     self.show(controller, sender: nil)
                     
                 //})
-                self.loginButton.isEnabled = true
 
             })
             
@@ -119,7 +159,7 @@ class LoginController: UIViewController  {
 
 
 
-    func createMessageWithText(text: String, context: NSManagedObjectContext, date: NSDate) {
+    func createMessageWithText(_ text: String, context: NSManagedObjectContext, date: Date) {
         let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
         //assigns text to message.text coredata object; same for timestamp
         message.text = text

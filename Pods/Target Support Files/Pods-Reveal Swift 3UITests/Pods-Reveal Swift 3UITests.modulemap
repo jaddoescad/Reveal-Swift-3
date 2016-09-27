@@ -1,6 +1,0 @@
-framework module Pods_Reveal_Swift_3UITests {
-  umbrella header "Pods-Reveal Swift 3UITests-umbrella.h"
-
-  export *
-  module * { export * }
-}

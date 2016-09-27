@@ -3,6 +3,9 @@ import UIKit
 import Firebase
 import JSQMessagesViewController
 import CoreData
+import FacebookCore
+import FacebookLogin
+import FacebookShare
 
 
 class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDelegate {
@@ -118,10 +121,10 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         getMessagesCount()
-        let fetchRequest: NSFetchRequest<Mesages> = Mesages.fetchRequest()
+        let fetchRequest: NSFetchRequest<Mesages> = Mesages.fetchRequest() as! NSFetchRequest<Mesages>
         do {
          let messages = try context.fetch(fetchRequest)
-         self.observeRealTimeMessages(MessagesFromCore: messages)
+         self.observeRealTimeMessages(messages)
         } catch{}
         
         //required inits by jsqmessagescontroller
@@ -197,7 +200,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func didPressSend(_ button: UIButton!, withMessageText text: String!, senderId: String! ,senderDisplayName: String!, date: Date){
         let timestamp: NSNumber = Double(Date().timeIntervalSinceReferenceDate) as NSNumber
         //save the messages to coredata when you press send which trigger NSFetchedresultscontroller and updates the collection view
-        saveMessagetoCoreData(text: text, timestamp: timestamp)
+        saveMessagetoCoreData(text, timestamp: timestamp)
         
         //updates firebase so that other users can get the messages in realtime
         let messagesNode = FIRDatabase.database().reference().child("messages")
@@ -245,12 +248,12 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
         self.collectionView.contentOffset = CGPoint(x: 0.0, y: self.collectionView.contentSize.height - oldOffset)
     }
     //saves messages to coredata
-    func saveMessagetoCoreData(text: String, timestamp: NSNumber) {
+    func saveMessagetoCoreData(_ text: String, timestamp: NSNumber) {
         
         let doubletimestamp = Double(timestamp)
-        let date = NSDate(timeIntervalSinceReferenceDate: (doubletimestamp))
+        let date = Date(timeIntervalSinceReferenceDate: (doubletimestamp))
         
-        createMessageWithText(text: text, context: context, date: date)
+        createMessageWithText(text, context: context, date: date)
         
         
         do {
@@ -261,14 +264,14 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
         }
     }
     //assigns messages to each core data object
-    private func createMessageWithText(text: String, context: NSManagedObjectContext, date: NSDate){
+    fileprivate func createMessageWithText(_ text: String, context: NSManagedObjectContext, date: Date){
         let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
         message.text = text
         message.timestamp = date
     }
     
     //observes messages when a message is sent to you
-    func observeRealTimeMessages(MessagesFromCore: [Mesages]) {
+    func observeRealTimeMessages(_ MessagesFromCore: [Mesages]) {
         // observe if a child is added querys to last messages when we first login
         FIRDatabase.database().reference().child("messages").queryLimited(toLast: 10).observe(.childAdded, with: {(snapshot) in
             guard let messageInfo = snapshot.value as? [String: AnyObject] else {return}
@@ -284,14 +287,14 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
             {
                 if UserDefaults.standard.bool(forKey: "first_time") == false {
                     //if its NOT the first time logging in
-                    self.createMessageWithText(text: text, context: self.context, date: date)
+                    self.createMessageWithText(text, context: self.context, date: date as Date)
                     try self.context.save()
                     //scrolls to bottom when message is received
                     CATransaction.begin()
                     CATransaction.setDisableActions(true)
                     self.scrollToBottom(animated: true)
                     CATransaction.commit()
-                } else if date == MessagesFromCore.last?.timestamp {
+                } else if date as Date == MessagesFromCore.last?.timestamp {
                     //if it is your first time logging in, and the we reached the Last message in child added. 
                 UserDefaults.standard.set(false, forKey: "first_time")
                     
@@ -306,7 +309,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
         
     }
     //creates real time message when message is received
-    func createMessageRealTime(text: String, context: NSManagedObjectContext, date: NSDate) {
+    func createMessageRealTime(_ text: String, context: NSManagedObjectContext, date: Date) {
         let message = NSEntityDescription.insertNewObject(forEntityName: "Mesages", into: context) as! Mesages
         message.text = text
         message.timestamp = date

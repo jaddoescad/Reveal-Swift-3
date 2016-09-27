@@ -283,6 +283,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
             do
             {
                 if UserDefaults.standard.bool(forKey: "first_time") == false {
+                    //if its NOT the first time logging in
                     self.createMessageWithText(text: text, context: self.context, date: date)
                     try self.context.save()
                     //scrolls to bottom when message is received
@@ -291,7 +292,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
                     self.scrollToBottom(animated: true)
                     CATransaction.commit()
                 } else if date == MessagesFromCore.last?.timestamp {
-                    
+                    //if it is your first time logging in, and the we reached the Last message in child added. 
                 UserDefaults.standard.set(false, forKey: "first_time")
                     
                 }

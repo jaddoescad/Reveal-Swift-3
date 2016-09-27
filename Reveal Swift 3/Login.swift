@@ -17,6 +17,8 @@ class LoginController: UIViewController  {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     //Initializing dispatch group: this is to make sure that all functions complete before presenting the chat controller
     let dispatch_group = DispatchGroup()
+    var loginbool = true
+    
     
     @IBOutlet weak var loginButton: UIButton!
     
@@ -43,8 +45,9 @@ class LoginController: UIViewController  {
     
     //login button action
     @IBAction func loginButton(sender: AnyObject) {
+        self.loginButton.isEnabled = false
         // a function that contains a set of function that enables authentication
-        loginButton.isEnabled = false // this is done to solve the bug of creating multiple instances at the same time
+        //loginButton.isEnabled = false // this is done to solve the bug of creating multiple instances at the same time
         AuthandGotoHome()
         
     }
@@ -55,19 +58,13 @@ class LoginController: UIViewController  {
         UserDefaults.standard.set(true, forKey: "first_time")
         self.observeMessages()
         //is notified when all functions are completed then it presents the chat controller
-        dispatch_group.notify(queue: DispatchQueue.main, execute: {
-            self.finishedlogin.text = "finished"
-            let controller = ChatLogController()
-            //shows chat controller
-            self.show(controller, sender: nil)
-            self.loginButton.isEnabled = true
-        })
+
     }
     
 
         func observeMessages() {
             //enters dispatch group
-            dispatch_group.enter()
+           // dispatch_group.enter()
             //gets a snapshot of all the messages from firebase
             FIRDatabase.database().reference().child("messages").observeSingleEvent(of: .value, with: {(_snapshot) in
                 //checks if Messages are nil otherwise it continues
@@ -101,7 +98,16 @@ class LoginController: UIViewController  {
                 }
                 
                 //leaves dispatch group
-                self.dispatch_group.leave()
+              //  self.dispatch_group.leave()
+               // self.dispatch_group.notify(queue: DispatchQueue.main, execute: {
+                    self.finishedlogin.text = "finished"
+                    let controller = ChatLogController()
+                    //shows chat controller
+                    self.show(controller, sender: nil)
+                    
+                //})
+                self.loginButton.isEnabled = true
+
             })
             
             

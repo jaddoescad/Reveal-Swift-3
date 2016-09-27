@@ -16,8 +16,8 @@ class LoginController: UIViewController  {
     //initializing Core Data Context
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     //Initializing dispatch group: this is to make sure that all functions complete before presenting the chat controller
-    let dispatch_group = DispatchGroup()
-    var loginbool = true
+    //let dispatch_group = DispatchGroup()
+    //var loginbool = true
     
     
     @IBOutlet weak var loginButton: UIButton!
@@ -70,7 +70,7 @@ class LoginController: UIViewController  {
                 //checks if Messages are nil otherwise it continues
                 guard let Messages = _snapshot.value as? [String: AnyObject] else {
                     //leaves dispatch group if Messages is nil
-                    self.dispatch_group.leave()
+                //    self.dispatch_group.leave()
                     return
                 }
                 //Higher order function that sorts messages by timestamp

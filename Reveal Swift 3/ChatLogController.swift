@@ -291,7 +291,9 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
                     self.scrollToBottom(animated: true)
                     CATransaction.commit()
                 } else if date == MessagesFromCore.last?.timestamp {
+                    
                 UserDefaults.standard.set(false, forKey: "first_time")
+                    
                 }
                 
             

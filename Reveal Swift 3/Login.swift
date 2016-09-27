@@ -125,14 +125,17 @@ class LoginController: UIViewController  {
                 for message in SortedMessages {
                     let timestamp = message["timestamp"] as! NSNumber
                     let date = NSDate(timeIntervalSinceReferenceDate: (Double(timestamp)))
+                    let countRequest: NSFetchRequest<Mesages> = Mesages.fetchRequest() as! NSFetchRequest<Mesages>
+                    countRequest.predicate = NSPredicate(format: "timestamp = %@", date)
                     //efficient count request to check if messages exist by count
                     do {
-                            //create messages by assigning text and timestamp to the coredata objects
-                           self.createMessageWithText(message["text"] as! String, context: self.context, date: date as Date)
+                        let count = try self.context.count(for: countRequest)
+                        if count == 0 {
+                        self.createMessageWithText(message["text"] as! String, context: self.context, date: date as Date)
                         
                         //saves messages
                         try self.context.save()
-                        
+                        }
                     }
                     catch {}
                     

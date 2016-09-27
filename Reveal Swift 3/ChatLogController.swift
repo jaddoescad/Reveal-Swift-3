@@ -118,7 +118,12 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         getMessagesCount()
-       // self.observeRealTimeMessages()
+        let fetchRequest: NSFetchRequest<Mesages> = Mesages.fetchRequest()
+        do {
+         let messages = try context.fetch(fetchRequest)
+         self.observeRealTimeMessages(MessagesFromCore: messages)
+        } catch{}
+        
         //required inits by jsqmessagescontroller
         self.senderId = "group"
         self.senderDisplayName = "name"
@@ -263,7 +268,7 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
     }
     
     //observes messages when a message is sent to you
-    func observeRealTimeMessages() {
+    func observeRealTimeMessages(MessagesFromCore: [Mesages]) {
         // observe if a child is added querys to last messages when we first login
         FIRDatabase.database().reference().child("messages").queryLimited(toLast: 10).observe(.childAdded, with: {(snapshot) in
             guard let messageInfo = snapshot.value as? [String: AnyObject] else {return}
@@ -274,15 +279,10 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
             
             let date = NSDate(timeIntervalSinceReferenceDate: (Double(timestamp)))
             //checks if there are duplicates
-            let countRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Mesages")
-            countRequest.predicate = NSPredicate(format: "timestamp = %@", date)
             
             do
             {
-                
-                let count = try self.context.count(for: countRequest)
-                if count == NSNotFound {}
-                if  count == 0 {
+                if UserDefaults.standard.bool(forKey: "first_time") == false {
                     self.createMessageWithText(text: text, context: self.context, date: date)
                     try self.context.save()
                     //scrolls to bottom when message is received
@@ -290,8 +290,10 @@ class ChatLogController: JSQMessagesViewController, NSFetchedResultsControllerDe
                     CATransaction.setDisableActions(true)
                     self.scrollToBottom(animated: true)
                     CATransaction.commit()
-
+                } else if date == MessagesFromCore.last?.timestamp {
+                UserDefaults.standard.set(false, forKey: "first_time")
                 }
+                
             
                 
             } catch {}

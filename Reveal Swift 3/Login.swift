@@ -51,6 +51,8 @@ class LoginController: UIViewController  {
     
     
     func AuthandGotoHome() {
+        
+        UserDefaults.standard.set(true, forKey: "first_time")
         self.observeMessages()
         //is notified when all functions are completed then it presents the chat controller
         dispatch_group.notify(queue: DispatchQueue.main, execute: {
